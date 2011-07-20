@@ -56,6 +56,9 @@ public class CopyResource
         Properties filterProperties = getFilterProperties();
         for (File sourceDirectory : sourceDirectories) {
             getLog().info("Copying resources from "+sourceDirectory+" to "+ outputDirectory);
+            if(!sourceDirectory.exists()) {
+                throw new AssertionError(sourceDirectory+" does not exist");
+            }
             for (File file : sourceDirectory.listFiles()) {
                 copyResources(sourceDirectory, file, filterProperties);
             }
@@ -111,7 +114,7 @@ public class CopyResource
 
         if(file.isDirectory()) {
             File dir = new File(outputDirectory, relative(root, file));
-            if (!dir.exists() && !dir.mkdir()) {
+            if (!dir.exists() && !dir.mkdirs()) {
                 throw new MojoExecutionException("Failed to create directory "+relative(outputDirectory,dir)+" root: "+root+" source:"+file);
             }
             for (File next : file.listFiles()) {
